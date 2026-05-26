@@ -3,6 +3,7 @@ import api, {
   type Ciclo,
   type Sede,
   type Turno,
+  type Carrera,
   type SolicitudPayload,
   type UploadResponse,
 } from '../api'
@@ -25,6 +26,7 @@ const initialForm = {
   modalidad: '' as Modalidad | '',
   turnoId: 0,
   sedeId: 0,
+  carreraId: 0,
   montoReferencia: '',
 }
 
@@ -46,6 +48,7 @@ export default function MatriculaForm({ onSuccess }: Props) {
   const [ciclos, setCiclos] = useState<Ciclo[]>([])
   const [sedes, setSedes] = useState<Sede[]>([])
   const [turnos, setTurnos] = useState<Turno[]>([])
+  const [carreras, setCarreras] = useState<Carrera[]>([])
   const [form, setForm] = useState(initialForm)
   const [voucherMatricula, setVoucherMatricula] =
     useState<VoucherUpload>(initialVoucher)
@@ -66,6 +69,10 @@ export default function MatriculaForm({ onSuccess }: Props) {
     api
       .get('/public/turnos')
       .then((r) => setTurnos(r.data.data || []))
+      .catch(() => {})
+    api
+      .get('/public/carreras')
+      .then((r) => setCarreras(r.data.data || []))
       .catch(() => {})
   }, [])
 
@@ -126,6 +133,8 @@ export default function MatriculaForm({ onSuccess }: Props) {
     if (!form.cicloId) return 'Selecciona el ciclo'
     if (!form.modalidad) return 'Selecciona la modalidad'
     if (!form.turnoId) return 'Selecciona el turno'
+    if (carreras.length > 0 && !form.carreraId)
+      return 'Selecciona la carrera a la que postulas'
     if (!form.sedeId) return 'Selecciona la sede donde quieres estudiar'
     if (form.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email))
       return 'Email no válido'
@@ -154,6 +163,7 @@ export default function MatriculaForm({ onSuccess }: Props) {
       modalidad: form.modalidad as Modalidad,
       turnoId: form.turnoId,
       sedeId: form.sedeId || undefined,
+      carreraId: form.carreraId || undefined,
       comprobanteMatriculaUrl: voucherMatricula.uploaded?.url,
       comprobanteMatriculaKey: voucherMatricula.uploaded?.key,
       comprobanteMensualidadUrl: voucherMensualidad.uploaded?.url,
@@ -233,6 +243,21 @@ export default function MatriculaForm({ onSuccess }: Props) {
             ]}
             className="md:col-span-2"
           />
+          {carreras.length > 0 && (
+            <Select
+              label="Carrera a la que postulas *"
+              value={form.carreraId || ''}
+              onChange={(v) => update('carreraId', Number(v))}
+              options={[
+                { value: '', label: 'Selecciona' },
+                ...carreras.map((c) => ({
+                  value: c.id,
+                  label: c.canal ? `${c.nombre} — ${c.canal.nombre}` : c.nombre,
+                })),
+              ]}
+              className="md:col-span-2"
+            />
+          )}
           <Select
             label="Modalidad *"
             value={form.modalidad}

@@ -23,6 +23,10 @@ build
 # TypeScript build info
 *.tsbuildinfo
 
+# Compiled config artifacts (Vercel builds from .ts source)
+vite.config.js
+vite.config.d.ts
+
 # Logs
 logs
 *.log

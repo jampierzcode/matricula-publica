@@ -49,6 +49,13 @@ export interface ConfiguracionPublica {
   estadosCuenta: string | null
 }
 
+export interface Carrera {
+  id: number
+  nombre: string
+  canalId: number | null
+  canal?: { id: number; nombre: string; area?: string | null } | null
+}
+
 export interface SolicitudPayload {
   nombre: string
   apellido?: string
@@ -59,11 +66,39 @@ export interface SolicitudPayload {
   modalidad: 'presencial' | 'virtual'
   turnoId: number
   sedeId?: number
+  carreraId?: number
+  canalId?: number
   comprobanteMatriculaUrl?: string
   comprobanteMatriculaKey?: string
   comprobanteMensualidadUrl?: string
   comprobanteMensualidadKey?: string
   montoReferencia?: number
+}
+
+export interface MiMatriculaData {
+  estudiante: { nombre: string; apellido: string }
+  ciclo: string | null
+  modalidad: string
+  turno: string | null
+  canal: { nombre: string; area: string | null } | null
+  carrera: string | null
+  horario: Array<{
+    dia: string
+    horaInicio: string
+    horaFin: string
+    curso: string | null
+    profesor: string | null
+    aula: string | null
+    codigoAula: string | null
+  }>
+  cronograma: Array<{
+    tipo: string
+    numeroCuota: number
+    montoEsperado: number
+    montoPagado: number
+    fechaVencimiento: string | null
+    estado: string
+  }>
 }
 
 export interface UploadResponse {
